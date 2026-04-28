@@ -1,0 +1,30 @@
+ # Virtual environment
+env/
+.venv/
+venv/
+
+# Other Python/OS files to ignore
+__pycache__/
+*.pyc
+.env
+# Models
+models/
+*.joblib
+*.pkl
+
+# Data
+dataset/
+processed_data/
+*.csv
+*.xlsx
+
+# IDE/OS
+.vscode/
+.DS_Store
+Thumbs.db
+# Uploads directory
+app/uploads/
+
+# Streamlit secrets and config
+.streamlit/
+app/.streamlit/

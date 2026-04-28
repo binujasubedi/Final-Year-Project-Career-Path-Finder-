@@ -1,0 +1,138 @@
+from typing import Optional, Dict, Any
+from supabase import Client
+from .supabase_client import get_supabase_client
+
+
+def _format_auth_error(error: Exception) -> str:
+    message = str(error).strip()
+    lowered = message.lower()
+
+    if "nodename nor servname provided" in lowered or "name or service not known" in lowered:
+        return (
+            "Could not reach Supabase. Check your internet connection, DNS, and that your "
+            "SUPABASE_URL points to a valid project host."
+        )
+
+    if "temporary failure in name resolution" in lowered:
+        return (
+            "DNS lookup failed while contacting Supabase. Check your network connection and "
+            "verify the configured Supabase URL."
+        )
+
+    return f"Error: {message}"
+
+
+class AuthService:
+    """
+    Handles user authentication and profile management
+    """
+
+    def __init__(self, client: Optional[Client] = None):
+        self.client = client or get_supabase_client()
+
+    def sign_up(self, email: str, password: str, full_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Register a new user
+        """
+        try:
+            response = self.client.auth.sign_up({
+                "email": email,
+                "password": password
+            })
+
+            if response.user:
+                user_data = {
+                    "id": response.user.id,
+                    "email": email,
+                    "full_name": full_name or email.split('@')[0],
+                    "auth_id": response.user.id
+                }
+                self.client.table("users").insert(user_data).execute()
+
+                return {
+                    "success": True,
+                    "user": response.user,
+                    "message": "Account created successfully!"
+                }
+            else:
+                return {
+                    "success": False,
+                    "message": "Failed to create account"
+                }
+
+        except Exception as e:
+            return {
+                "success": False,
+                "message": _format_auth_error(e)
+            }
+
+    def sign_in(self, email: str, password: str) -> Dict[str, Any]:
+        """
+        Sign in an existing user
+        """
+        try:
+            response = self.client.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
+
+            if response.user:
+                self.client.table("users").update({
+                    "last_login": "now()"
+                }).eq("id", response.user.id).execute()
+
+                return {
+                    "success": True,
+                    "user": response.user,
+                    "session": response.session,
+                    "message": "Signed in successfully!"
+                }
+            else:
+                return {
+                    "success": False,
+                    "message": "Invalid credentials"
+                }
+
+        except Exception as e:
+            return {
+                "success": False,
+                "message": _format_auth_error(e)
+            }
+
+    def sign_out(self) -> Dict[str, Any]:
+        """
+        Sign out current user
+        """
+        try:
+            self.client.auth.sign_out()
+            return {
+                "success": True,
+                "message": "Signed out successfully!"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "message": _format_auth_error(e)
+            }
+
+    def get_current_user(self) -> Optional[Dict[str, Any]]:
+        """
+        Get currently authenticated user
+        """
+        try:
+            user = self.client.auth.get_user()
+            if user:
+                return user.user
+            return None
+        except:
+            return None
+
+    def get_session(self) -> Optional[Any]:
+        """
+        Get current session
+        """
+        try:
+            session = self.client.auth.get_session()
+            return session
+        except:
+            return None
