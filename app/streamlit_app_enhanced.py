@@ -53,13 +53,24 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ✅ MODERN PROFESSIONAL UI - Like Popular Websites
+# Fresh, simple UI theme
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --accent: #10b981;
+        --ink: #111827;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --panel: #ffffff;
+        --soft: #f8fafc;
+    }
 
     * {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     /* Hide Streamlit branding */
@@ -67,21 +78,19 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Main app background */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(180deg, #f8fafc 0%, #eef6ff 100%);
+        color: var(--ink);
     }
 
-    /* ============================================
-       LOGIN PAGE STYLING - Modern Card Design
-    ============================================ */
     .login-container {
-        max-width: 450px;
-        margin: 60px auto;
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 460px;
+        margin: 48px auto 24px;
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 36px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        border: 1px solid var(--line);
         animation: fadeInUp 0.6s ease;
     }
 
@@ -104,26 +113,22 @@ st.markdown("""
     .login-title {
         font-size: 2rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: var(--ink);
         margin-bottom: 8px;
+        letter-spacing: 0;
     }
 
     .login-subtitle {
-        color: #666;
+        color: var(--muted);
         font-size: 0.95rem;
         font-weight: 400;
     }
 
-    /* ============================================
-       DASHBOARD STYLING - Modern Layout
-    ============================================ */
     .dashboard-header {
-        background: white;
+        background: var(--panel);
         padding: 20px 40px;
         margin: -70px -70px 30px -70px;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid var(--line);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -132,28 +137,28 @@ st.markdown("""
     .dashboard-title {
         font-size: 1.8rem;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--ink);
         margin: 0;
     }
 
     .dashboard-container {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 40px;
-        background: rgba(255, 255, 255, 0.98);
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        border-radius: 8px;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
         margin-top: 20px;
     }
 
-    /* Welcome Banner */
     .welcome-banner {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, #0f766e 100%);
         padding: 30px;
-        border-radius: 15px;
+        border-radius: 8px;
         color: white;
         margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.16);
     }
 
     .welcome-banner h2 {
@@ -171,226 +176,236 @@ st.markdown("""
         font-size: 1rem;
     }
 
-    /* Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-
     .stat-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 25px;
-        border-radius: 15px;
-        color: white;
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        background: var(--panel);
+        padding: 24px;
+        border-radius: 8px;
+        color: var(--ink);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
         transition: all 0.3s ease;
-        border: none;
+        border: 1px solid var(--line);
+        text-align: center;
     }
 
     .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+        border-color: #bfdbfe;
     }
 
     .stat-number {
-        font-size: 2.5rem;
-        font-weight: 800;
+        font-size: 2.25rem;
+        font-weight: 700;
         margin: 10px 0;
+        color: var(--primary);
     }
 
     .stat-label {
         font-size: 0.85rem;
-        opacity: 0.9;
+        color: var(--muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        font-weight: 500;
+        font-weight: 600;
     }
 
-    /* Section Headers */
     .section-header {
         font-size: 1.3rem;
         font-weight: 600;
-        color:#ffffff;
+        color: var(--ink);
         margin: 30px 0 20px 0;
         padding-bottom: 10px;
-        border-bottom: 2px solid #e5e7eb;
+        border-bottom: 1px solid var(--line);
     }
 
-    /* Buttons - Modern Style */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--primary);
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 8px;
         padding: 12px 30px;
         font-weight: 600;
         font-size: 1rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
         width: 100%;
     }
 
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        background: var(--primary-dark);
+        box-shadow: 0 14px 24px rgba(37, 99, 235, 0.22);
     }
 
-    /* Tabs - Clean Design */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background: #f9fafb;
-        padding: 8px;
-        border-radius: 12px;
+        gap: 6px;
+        background: #eaf2ff;
+        padding: 6px;
+        border-radius: 8px;
     }
 
     .stTabs [data-baseweb="tab"] {
         height: 50px;
         background: transparent;
-        border-radius: 8px;
+        border-radius: 6px;
         padding: 10px 20px;
         font-weight: 600;
-        color: #6b7280;
+        color: #475569;
         border: none;
     }
 
     .stTabs [aria-selected="true"] {
         background: white;
-        color: #667eea;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        color: var(--primary);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
     }
 
-    /* Input Fields - Modern */
     .stTextInput > div > div > input {
-        border-radius: 10px;
-        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        border: 1px solid var(--line);
         padding: 12px 16px;
         font-size: 1rem;
         transition: all 0.3s ease;
     }
 
     .stTextInput > div > div > input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
-    /* File Uploader */
     .uploadedFile {
-        background: #f9fafb;
-        border: 2px dashed #d1d5db;
-        border-radius: 12px;
+        background: var(--soft);
+        border: 2px dashed #bfdbfe;
+        border-radius: 8px;
         padding: 20px;
         transition: all 0.3s ease;
     }
 
     .uploadedFile:hover {
-        border-color: #667eea;
-        background: #f0f4ff;
+        border-color: var(--primary);
+        background: #eff6ff;
     }
 
-    /* Skill Badges */
     .skill-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 7px 13px;
+        border-radius: 999px;
         margin: 5px;
         font-weight: 600;
         font-size: 0.85rem;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        border: 1px solid #bfdbfe;
     }
 
     .skill-badge-missing {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        background: #fee2e2;
+        color: #991b1b;
+        border-color: #fecaca;
     }
 
-    /* Message Boxes */
     .success-box {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: #ecfdf5;
         padding: 16px 20px;
-        border-radius: 12px;
-        color: white;
+        border-radius: 8px;
+        color: #065f46;
         margin: 15px 0;
         font-weight: 500;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        border: 1px solid #a7f3d0;
     }
 
     .warning-box {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        background: #fffbeb;
         padding: 16px 20px;
-        border-radius: 12px;
-        color: white;
+        border-radius: 8px;
+        color: #92400e;
         margin: 15px 0;
         font-weight: 500;
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        border: 1px solid #fde68a;
     }
 
     .info-box {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: #eff6ff;
         padding: 16px 20px;
-        border-radius: 12px;
-        color: white;
+        border-radius: 8px;
+        color: #1e3a8a;
         margin: 15px 0;
         font-weight: 500;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        border: 1px solid #bfdbfe;
     }
 
-    /* Progress Bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--accent);
     }
 
-    /* Expander */
     .streamlit-expanderHeader {
-        background: #f9fafb;
-        border-radius: 10px;
+        background: var(--soft);
+        border-radius: 8px;
         font-weight: 600;
         color: #374151;
+        border: 1px solid var(--line);
     }
 
-    /* Metrics */
     [data-testid="stMetricValue"] {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: #667eea;
+        color: var(--primary);
     }
 
-    /* Remove padding from block container */
+    [data-testid="stMetricLabel"] {
+        color: var(--muted);
+        font-weight: 600;
+    }
+
     .block-container {
-        padding-top: 1rem;
+        padding-top: 2rem;
         padding-bottom: 0rem;
-        max-width: 100%;
     }
 
-    /* Content area cards */
     .content-card {
-        background: white;
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
         margin-bottom: 20px;
     }
 
-    /* Selectbox */
     .stSelectbox > div > div {
-        border-radius: 10px;
-        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        border: 1px solid var(--line);
     }
 
-    /* Sign out button */
     .sign-out-btn button {
         background: white !important;
-        color: #667eea !important;
-        border: 2px solid #667eea !important;
+        color: var(--primary) !important;
+        border: 1px solid #bfdbfe !important;
         padding: 8px 20px !important;
         font-size: 0.9rem !important;
+        box-shadow: none !important;
     }
 
     .sign-out-btn button:hover {
-        background: #667eea !important;
-        color: white !important;
+        background: #eff6ff !important;
+        color: var(--primary-dark) !important;
+    }
+
+    @media (max-width: 768px) {
+        .login-container {
+            padding: 28px 22px;
+            margin-top: 24px;
+        }
+
+        .dashboard-container {
+            padding: 12px;
+        }
+
+        .welcome-banner {
+            padding: 24px;
+        }
+
+        .stat-card {
+            margin-bottom: 12px;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -488,8 +503,6 @@ def show_auth_page():
 
 def show_dashboard():
     """Show modern dashboard"""
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    
     # Header with sign out
     col1, col2 = st.columns([4, 1])
     with col1:
@@ -562,8 +575,6 @@ def show_dashboard():
     
     with tab3:
         show_analytics()
-    
-    st.markdown('</div>', unsafe_allow_html=True)
 
 def show_upload_section():
     """Upload and analyze resume section"""
@@ -829,11 +840,11 @@ def show_analytics():
             title='Your Improvement Over Time',
             labels={'match_score': 'Match Score (%)', 'analysis_date': 'Date'}
         )
-        fig.update_traces(line_color='#667eea', line_width=3)
+        fig.update_traces(line_color='#2563eb', line_width=3)
         fig.update_layout(
             plot_bgcolor='white',
             paper_bgcolor='white',
-            font=dict(family="Poppins")
+            font=dict(family="Inter")
         )
         st.plotly_chart(fig, use_container_width=True)
     
@@ -845,10 +856,10 @@ def show_analytics():
             names=role_counts.index,
             title='Distribution of Analyzed Roles'
         )
-        fig.update_traces(marker=dict(colors=px.colors.sequential.Purples))
+        fig.update_traces(marker=dict(colors=['#2563eb', '#10b981', '#f59e0b', '#64748b']))
         fig.update_layout(
             paper_bgcolor='white',
-            font=dict(family="Poppins")
+            font=dict(family="Inter")
         )
         st.plotly_chart(fig, use_container_width=True)
     
@@ -871,21 +882,22 @@ def show_footer():
             text-align: center;
             padding: 25px 0;
             margin-top: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            color: #475569;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
         }
         .footer a {
-            color: white;
+            color: #2563eb;
             text-decoration: none;
             font-weight: 600;
             margin: 0 12px;
             transition: color 0.3s ease;
         }
         .footer a:hover {
-            color: #ffd700;
+            color: #1d4ed8;
         }
         .footer p {
             margin: 5px 0 0 0;
@@ -905,8 +917,7 @@ def show_footer():
     <div class="footer">
         <p> Built by <strong>Binuja Subedi</strong></p>
         <div class="social-icons">
-            <a href="https://github.com/samir-khanal" target="_blank">GitHub</a> |
-            <a href="https://www.linkedin.com/in/samir-khanal7/" target="_blank">🔗 LinkedIn</a> |
+           <a href="https://github.com/binujasubedi" class="footer-link">GitHub</a>
         </div>
         <p>© 2026 Smart Career — All Rights Reserved.</p>
     </div>

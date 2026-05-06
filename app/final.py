@@ -50,10 +50,23 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ✅ PREMIUM WHITE UI DESIGN
+# Fresh, simple UI theme
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --accent: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --ink: #111827;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --panel: #ffffff;
+        --soft: #f8fafc;
+    }
 
     * {
         font-family: 'Inter', sans-serif;
@@ -64,22 +77,19 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Main app background */
     .stApp {
-        background: #fafbfc;
+        background: linear-gradient(180deg, #f8fafc 0%, #eef6ff 100%);
+        color: var(--ink);
     }
 
-    /* ============================================
-       LOGIN PAGE STYLING - Premium Card Design
-    ============================================ */
     .login-container {
-        max-width: 440px;
-        margin: 60px auto;
-        background: white;
-        border-radius: 20px;
-        padding: 48px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        border: 1px solid #f0f0f0;
+        max-width: 460px;
+        margin: 48px auto 24px;
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 36px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        border: 1px solid var(--line);
     }
 
     .login-header {
@@ -90,39 +100,35 @@ st.markdown("""
     .login-title {
         font-size: 2rem;
         font-weight: 700;
-        color: #111827;
+        color: var(--ink);
         margin-bottom: 12px;
-        letter-spacing: -0.5px;
+        letter-spacing: 0;
     }
 
     .login-subtitle {
-        color: #6b7280;
+        color: var(--muted);
         font-size: 1rem;
         font-weight: 400;
         line-height: 1.5;
     }
 
-    /* ============================================
-       DASHBOARD STYLING - Premium Layout
-    ============================================ */
     .dashboard-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 24px;
     }
 
-    /* Welcome Banner */
     .welcome-banner {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 32px;
-        border-radius: 16px;
+        background: linear-gradient(135deg, var(--primary) 0%, #0f766e 100%);
+        padding: 30px;
+        border-radius: 8px;
         color: white;
         margin-bottom: 32px;
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.16);
     }
 
     .welcome-title {
-        font-size: 1.5rem;
+        font-size: 1.65rem;
         font-weight: 600;
         margin: 0 0 8px 0;
         color: white;
@@ -135,241 +141,242 @@ st.markdown("""
         color: white;
     }
 
-    /* Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-
     .stat-card {
-        background: white;
+        background: var(--panel);
         padding: 24px;
-        border-radius: 16px;
-        border: 1px solid #f0f0f0;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
         transition: all 0.3s ease;
         text-align: center;
     }
 
     .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+        border-color: #bfdbfe;
     }
 
     .stat-number {
         font-size: 2.25rem;
         font-weight: 700;
-        color: #111827;
+        color: var(--primary);
         margin: 12px 0;
     }
 
     .stat-label {
         font-size: 0.8rem;
-        color: #6b7280;
+        color: var(--muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-weight: 600;
     }
 
-    /* Section Headers */
     .section-header {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #111827;
+        color: var(--ink);
         margin: 40px 0 24px 0;
         padding-bottom: 12px;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 1px solid var(--line);
     }
 
-    /* Buttons - Premium Style */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--primary);
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 8px;
         padding: 14px 28px;
         font-weight: 600;
         font-size: 0.95rem;
         transition: all 0.3s ease;
         width: 100%;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
     }
 
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        background: var(--primary-dark);
+        box-shadow: 0 14px 24px rgba(37, 99, 235, 0.22);
     }
 
-    /* Secondary Button */
     .secondary-btn button {
         background: white !important;
-        color: #667eea !important;
-        border: 2px solid #667eea !important;
+        color: var(--primary) !important;
+        border: 1px solid #bfdbfe !important;
         box-shadow: none !important;
     }
 
     .secondary-btn button:hover {
-        background: #667eea !important;
+        background: #eff6ff !important;
         color: white !important;
+        color: var(--primary-dark) !important;
     }
 
-    /* Tabs - Premium Design */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-        background: #f8fafc;
+        gap: 6px;
+        background: #eaf2ff;
         padding: 6px;
-        border-radius: 12px;
+        border-radius: 8px;
     }
 
     .stTabs [data-baseweb="tab"] {
         height: 48px;
         background: transparent;
-        border-radius: 8px;
+        border-radius: 6px;
         padding: 12px 20px;
         font-weight: 500;
-        color: #6b7280;
+        color: #475569;
         border: none;
         transition: all 0.3s ease;
     }
 
     .stTabs [aria-selected="true"] {
         background: white;
-        color: #667eea;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        color: var(--primary);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
     }
 
-    /* Input Fields */
     .stTextInput > div > div > input {
-        border-radius: 10px;
-        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        border: 1px solid var(--line);
         padding: 14px 16px;
         font-size: 0.95rem;
         transition: all 0.3s ease;
     }
 
     .stTextInput > div > div > input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
-    /* File Uploader */
     .uploadedFile {
-        background: #f8fafc;
-        border: 2px dashed #d1d5db;
-        border-radius: 12px;
+        background: var(--soft);
+        border: 2px dashed #bfdbfe;
+        border-radius: 8px;
         padding: 24px;
         transition: all 0.3s ease;
     }
 
     .uploadedFile:hover {
-        border-color: #667eea;
-        background: #f0f4ff;
+        border-color: var(--primary);
+        background: #eff6ff;
     }
 
-    /* Skill Badges */
     .skill-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 7px 13px;
+        border-radius: 999px;
         margin: 6px;
         font-weight: 600;
         font-size: 0.8rem;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        border: 1px solid #bfdbfe;
     }
 
     .skill-badge-missing {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        background: #fee2e2;
+        color: #991b1b;
+        border-color: #fecaca;
     }
 
-    /* Message Boxes */
     .success-box {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: #ecfdf5;
         padding: 20px 24px;
-        border-radius: 12px;
-        color: white;
+        border-radius: 8px;
+        color: #065f46;
         margin: 20px 0;
         font-weight: 500;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        border: 1px solid #a7f3d0;
     }
 
     .warning-box {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        background: #fffbeb;
         padding: 20px 24px;
-        border-radius: 12px;
-        color: white;
+        border-radius: 8px;
+        color: #92400e;
         margin: 20px 0;
         font-weight: 500;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        border: 1px solid #fde68a;
     }
 
     .info-box {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: #eff6ff;
         padding: 20px 24px;
-        border-radius: 12px;
-        color: white;
+        border-radius: 8px;
+        color: #1e3a8a;
         margin: 20px 0;
         font-weight: 500;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        border: 1px solid #bfdbfe;
     }
 
-    /* Progress Bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--accent);
     }
 
-    /* Expander */
     .streamlit-expanderHeader {
-        background: #f8fafc;
-        border-radius: 10px;
+        background: var(--soft);
+        border-radius: 8px;
         font-weight: 600;
         color: #374151;
-        border: 1px solid #f0f0f0;
+        border: 1px solid var(--line);
         margin-bottom: 8px;
     }
 
-    /* Metrics */
     [data-testid="stMetricValue"] {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #667eea;
+        color: var(--primary);
     }
 
     [data-testid="stMetricLabel"] {
-        color: #6b7280;
+        color: var(--muted);
         font-weight: 600;
     }
 
-    /* Remove padding */
     .block-container {
         padding-top: 2rem;
         padding-bottom: 0rem;
     }
 
-    /* Content Cards */
     .content-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--panel);
+        border-radius: 8px;
         padding: 24px;
-        border: 1px solid #f0f0f0;
+        border: 1px solid var(--line);
         margin-bottom: 20px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
     }
 
-    /* Selectbox */
     .stSelectbox > div > div {
-        border-radius: 10px;
-        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        border: 1px solid var(--line);
     }
 
-    /* Dataframe */
     .dataframe {
-        border: 1px solid #f0f0f0 !important;
-        border-radius: 12px !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 8px !important;
         overflow: hidden !important;
+    }
+
+    @media (max-width: 768px) {
+        .login-container {
+            padding: 28px 22px;
+            margin-top: 24px;
+        }
+
+        .dashboard-container {
+            padding: 0 8px;
+        }
+
+        .welcome-banner {
+            padding: 24px;
+        }
+
+        .stat-card {
+            margin-bottom: 12px;
+        }
     }
 
     /* Custom spacing */
@@ -477,8 +484,6 @@ def show_auth_page():
 
 def show_dashboard():
     """Show premium dashboard"""
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    
     # Header with sign out
     col1, col2 = st.columns([4, 1])
     with col1:
@@ -551,8 +556,6 @@ def show_dashboard():
     
     with tab3:
         show_analytics()
-    
-    st.markdown('</div>', unsafe_allow_html=True)
 
 def show_upload_section():
     """Upload and analyze resume section"""
@@ -777,7 +780,7 @@ def show_analytics():
             y='match_score',
             labels={'match_score': 'Match Score (%)', 'analysis_date': 'Date'}
         )
-        fig.update_traces(line_color='#667eea', line_width=3)
+        fig.update_traces(line_color='#2563eb', line_width=3)
         fig.update_layout(
             plot_bgcolor='white',
             paper_bgcolor='white',
@@ -793,7 +796,7 @@ def show_analytics():
             values=role_counts.values,
             names=role_counts.index,
         )
-        fig.update_traces(marker=dict(colors=['#667eea', '#764ba2', '#9f7aea', '#d6bcfa']))
+        fig.update_traces(marker=dict(colors=['#2563eb', '#10b981', '#f59e0b', '#64748b']))
         fig.update_layout(
             paper_bgcolor='white',
             font=dict(family="Inter"),
@@ -816,7 +819,7 @@ def show_footer():
             background: white;
             padding: 40px 0;
             margin-top: 80px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid #e5e7eb;
         }
         .footer-content {
             max-width: 1200px;
@@ -844,7 +847,7 @@ def show_footer():
             transition: color 0.3s ease;
         }
         .footer-link:hover {
-            color: #667eea;
+            color: #2563eb;
         }
         .footer-bottom {
             text-align: center;
@@ -878,9 +881,7 @@ def show_footer():
                 </div>
                 <div class="footer-section">
                     <h4>Connect</h4>
-                    <a href="https://github.com/samir-khanal" class="footer-link">GitHub</a>
-                    <a href="https://www.linkedin.com/in/samir-khanal7/" class="footer-link">LinkedIn</a>
-                </div>
+                    <a href="https://github.com/binujasubedi" class="footer-link">GitHub</a>
             </div>
             <div class="footer-bottom">
                 © 2026 Smart Career. Built by Binuja Subedi. All rights reserved.
