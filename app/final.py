@@ -1,5 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
+import base64
+import html
 import sys
 import time
 import streamlit as st
@@ -23,6 +25,48 @@ except ImportError as e:
 UPLOADS_DIR = PROJ_ROOT / "app" / "uploads"
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 ANALYSES_CACHE_PATH = UPLOADS_DIR / "local_analyses.json"
+
+
+def safe_upload_name(filename: str) -> str:
+    return Path(filename).name.replace(" ", "_")
+
+
+def show_resume_viewer(file_path: Path, filename: str, file_type: str) -> None:
+    file_bytes = file_path.read_bytes()
+    normalized_type = file_type.lower().strip(".")
+    encoded_file = base64.b64encode(file_bytes).decode("utf-8")
+    escaped_filename = html.escape(filename)
+    mime = (
+        "application/pdf"
+        if normalized_type == "pdf"
+        else "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+
+    st.download_button(
+        "Download Resume",
+        data=file_bytes,
+        file_name=filename,
+        mime=mime,
+        width="stretch",
+        key=f"download_uploaded_resume_{file_path.name}"
+    )
+
+    if normalized_type != "pdf":
+        st.info("DOCX preview is not available here. Download the resume to view the original file.")
+        return
+
+    st.markdown(
+        f"""
+        <iframe
+            title="{escaped_filename}"
+            src="data:application/pdf;base64,{encoded_file}"
+            width="100%"
+            height="720"
+            style="margin-top: 14px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;"
+        ></iframe>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 def load_local_analyses() -> list[dict]:
@@ -181,35 +225,44 @@ st.markdown("""
         border-bottom: 1px solid var(--line);
     }
 
-    .stButton > button {
-        background: var(--primary);
-        color: white;
-        border: none;
+    .stButton > button,
+    .stDownloadButton > button {
+        background: var(--primary) !important;
+        color: #ffffff !important;
+        border: none !important;
         border-radius: 8px;
         padding: 14px 28px;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 0.95rem;
         transition: all 0.3s ease;
         width: 100%;
         box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
     }
 
-    .stButton > button:hover {
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
         transform: translateY(-2px);
-        background: var(--primary-dark);
+        background: var(--primary-dark) !important;
+        color: #ffffff !important;
         box-shadow: 0 14px 24px rgba(37, 99, 235, 0.22);
     }
 
-    .secondary-btn button {
+    .stButton > button *,
+    .stDownloadButton > button * {
+        color: #ffffff !important;
+    }
+
+    .secondary-btn button,
+    .secondary-btn button * {
         background: white !important;
         color: var(--primary) !important;
         border: 1px solid #bfdbfe !important;
         box-shadow: none !important;
     }
 
-    .secondary-btn button:hover {
+    .secondary-btn button:hover,
+    .secondary-btn button:hover * {
         background: #eff6ff !important;
-        color: white !important;
         color: var(--primary-dark) !important;
     }
 
@@ -248,6 +301,72 @@ st.markdown("""
     .stTextInput > div > div > input:focus {
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    /* Streamlit controls: force readable text on the light app theme */
+    .stMarkdown,
+    .stMarkdown p,
+    .stMarkdown li,
+    label,
+    [data-testid="stWidgetLabel"],
+    [data-testid="stFileUploader"] {
+        color: var(--ink);
+    }
+
+    [data-testid="stFileUploader"] section,
+    [data-testid="stFileUploaderDropzone"] {
+        background: #ffffff !important;
+        border: 2px dashed #bfdbfe !important;
+        border-radius: 8px !important;
+    }
+
+    [data-testid="stFileUploader"] section *,
+    [data-testid="stFileUploaderDropzone"] * {
+        color: var(--ink) !important;
+    }
+
+    [data-testid="stFileUploader"] small,
+    [data-testid="stFileUploaderDropzone"] small,
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzoneInstructions"] {
+        color: #475569 !important;
+    }
+
+    [data-testid="stFileUploader"] button {
+        background: #ffffff !important;
+        color: var(--primary) !important;
+        border: 1px solid #bfdbfe !important;
+    }
+
+    [data-testid="stFileUploaderFile"],
+    [data-testid="stFileUploaderFileData"] {
+        background: #ffffff !important;
+        color: var(--ink) !important;
+    }
+
+    [data-testid="stFileUploaderFile"] *,
+    [data-testid="stFileUploaderFileData"] * {
+        color: var(--ink) !important;
+    }
+
+    [data-testid="stFileUploaderFile"] svg,
+    [data-testid="stFileUploaderDeleteBtn"] svg {
+        color: #475569 !important;
+        fill: none !important;
+        stroke: currentColor !important;
+    }
+
+    [data-testid="stAlert"],
+    [data-testid="stAlert"] *,
+    [data-testid="stNotification"],
+    [data-testid="stNotification"] * {
+        color: var(--ink) !important;
+    }
+
+    input,
+    textarea,
+    [data-baseweb="select"] *,
+    [data-baseweb="popover"] * {
+        color: var(--ink) !important;
     }
 
     .uploadedFile {
@@ -396,6 +515,18 @@ def init_session_state():
         st.session_state.page = 'auth'
     if 'local_analyses' not in st.session_state:
         st.session_state.local_analyses = load_local_analyses()
+    if 'show_uploaded_resume' not in st.session_state:
+        st.session_state.show_uploaded_resume = False
+    if 'current_upload_key' not in st.session_state:
+        st.session_state.current_upload_key = None
+    if 'current_upload_path' not in st.session_state:
+        st.session_state.current_upload_path = None
+    if 'current_upload_local_id' not in st.session_state:
+        st.session_state.current_upload_local_id = None
+    if 'current_upload_result' not in st.session_state:
+        st.session_state.current_upload_result = None
+    if 'current_resume_record' not in st.session_state:
+        st.session_state.current_resume_record = None
     if 'auth_service' not in st.session_state:
         try:
             init_supabase()
@@ -429,7 +560,7 @@ def show_auth_page():
                 password = st.text_input("Password", type="password", placeholder="Enter your password", key="signin_password")
                 
                 st.markdown('<div class="spacing-md"></div>', unsafe_allow_html=True)
-                submit = st.form_submit_button("Sign In", use_container_width=True)
+                submit = st.form_submit_button("Sign In", width="stretch")
 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -462,7 +593,7 @@ def show_auth_page():
                 password_confirm = st.text_input("🔒 Confirm Password", type="password", placeholder="Re-enter your password", key="signup_confirm")
                 
                 st.markdown('<div class="spacing-md"></div>', unsafe_allow_html=True)
-                submit = st.form_submit_button("Create Account", use_container_width=True)
+                submit = st.form_submit_button("Create Account", width="stretch")
                 
                 if submit:
                     if all([full_name, email, password, password_confirm]):
@@ -498,7 +629,7 @@ def show_dashboard():
     with col2:
         st.markdown('<div class="spacing-md"></div>', unsafe_allow_html=True)
         st.markdown('<div class="secondary-btn">', unsafe_allow_html=True)
-        if st.button(" Sign Out", use_container_width=True):
+        if st.button(" Sign Out", width="stretch"):
             st.session_state.auth_service.sign_out()
             st.session_state.authenticated = False
             st.session_state.user = None
@@ -508,6 +639,22 @@ def show_dashboard():
     
     # Statistics Cards
     stats = st.session_state.resume_repo.get_resume_statistics(st.session_state.user.id)
+    local_analyses = [
+        analysis for analysis in st.session_state.local_analyses
+        if analysis.get("user_id") == st.session_state.user.id
+    ]
+    if local_analyses:
+        db_analysis_count = stats.get("total_analyses", 0)
+        db_avg = stats.get("average_match_score", 0)
+        db_score_total = db_avg * db_analysis_count
+        local_score_total = sum(analysis.get("match_score", 0) for analysis in local_analyses)
+        total_analyses = db_analysis_count + len(local_analyses)
+
+        stats["total_analyses"] = total_analyses
+        stats["average_match_score"] = round(
+            (db_score_total + local_score_total) / total_analyses,
+            2
+        )
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -565,36 +712,63 @@ def show_upload_section():
     uploaded = st.file_uploader(
         "Choose your resume file",
         type=["pdf", "docx"],
-        help="Upload your resume for AI-powered analysis"
+        help="Upload your resume for AI-powered analysis",
+        key="resume_upload"
     )
     
     if uploaded:
-        ts = time.strftime("%Y%m%d-%H%M%S")
-        safe_name = uploaded.name.replace(" ", "_")
-        saved_path = UPLOADS_DIR / f"{ts}__{safe_name}"
-        
-        with saved_path.open("wb") as f:
-            f.write(uploaded.getbuffer())
+        safe_name = safe_upload_name(uploaded.name)
+        upload_key = f"{uploaded.name}:{uploaded.size}:{uploaded.type}"
+        uploaded_bytes = uploaded.getbuffer()
+
+        if st.session_state.current_upload_key != upload_key:
+            ts = time.strftime("%Y%m%d-%H%M%S")
+            saved_path = UPLOADS_DIR / f"{ts}__{safe_name}"
+            
+            with saved_path.open("wb") as f:
+                f.write(uploaded_bytes)
+
+            st.session_state.current_upload_key = upload_key
+            st.session_state.current_upload_path = str(saved_path)
+            st.session_state.current_upload_local_id = f"local-{ts}"
+            st.session_state.current_upload_result = None
+            st.session_state.current_resume_record = None
+            st.session_state.show_uploaded_resume = False
+        else:
+            saved_path = Path(st.session_state.current_upload_path)
+
+        if st.button("View Resume", key=f"view_uploaded_resume_{safe_name}", width="stretch"):
+            st.session_state.show_uploaded_resume = not st.session_state.show_uploaded_resume
+
+        if st.session_state.show_uploaded_resume:
+            show_resume_viewer(saved_path, uploaded.name, saved_path.suffix.lstrip("."))
         
         st.markdown('<div class="success-box">✅ Resume uploaded successfully! Analyzing now...</div>', unsafe_allow_html=True)
-        
-        with st.spinner("🔍 Analyzing your resume with AI..."):
-            progress = st.progress(0)
-            for i in range(100):
-                time.sleep(0.01)
-                progress.progress(i + 1)
-            
-            roles_map = load_skill_dataset_from_db()
-            result = analyze_resume(str(saved_path))
-            
-            resume_record = st.session_state.resume_repo.save_resume(
-                user_id=st.session_state.user.id,
-                filename=uploaded.name,
-                file_type=uploaded.type.split('/')[-1],
-                raw_text="",
-                parsed_data=result["parsed"],
-                file_size=uploaded.size
-            )
+
+        roles_map = load_skill_dataset_from_db()
+        if st.session_state.current_upload_result is None:
+            with st.spinner("🔍 Analyzing your resume with AI..."):
+                progress = st.progress(0)
+                for i in range(100):
+                    time.sleep(0.01)
+                    progress.progress(i + 1)
+                
+                result = analyze_resume(str(saved_path))
+                
+                resume_record = st.session_state.resume_repo.save_resume(
+                    user_id=st.session_state.user.id,
+                    filename=uploaded.name,
+                    file_type=saved_path.suffix.lstrip("."),
+                    raw_text="",
+                    parsed_data=result["parsed"],
+                    file_size=uploaded.size
+                )
+
+                st.session_state.current_upload_result = result
+                st.session_state.current_resume_record = resume_record
+        else:
+            result = st.session_state.current_upload_result
+            resume_record = st.session_state.current_resume_record
         
         st.markdown('<div class="spacing-lg"></div>', unsafe_allow_html=True)
         
@@ -679,7 +853,7 @@ def show_upload_section():
             if not analysis_saved:
                 st.session_state.local_analyses.append({
                     "user_id": st.session_state.user.id,
-                    "resume_id": resume_record["id"] if resume_record else f"local-{ts}",
+                    "resume_id": resume_record["id"] if resume_record else st.session_state.current_upload_local_id,
                     "target_role": chosen,
                     "matched_skills": matched,
                     "missing_skills": missing,
@@ -711,9 +885,6 @@ def show_upload_section():
             else:
                 st.markdown('<div class="success-box">🎉 Perfect match! No skills missing!</div>', unsafe_allow_html=True)
         
-        if saved_path.exists():
-            saved_path.unlink()
-
 def show_my_resumes():
     """Show user's uploaded resumes"""
     st.markdown('<div class="section-header">📁 Your Resume History</div>', unsafe_allow_html=True)
@@ -746,7 +917,7 @@ def show_my_resumes():
                 st.markdown(skills_html, unsafe_allow_html=True)
             
             st.markdown('<div class="spacing-sm"></div>', unsafe_allow_html=True)
-            if st.button(f"🗑️ Delete Resume", key=f"del_{resume['id']}", use_container_width=True):
+            if st.button(f"🗑️ Delete Resume", key=f"del_{resume['id']}", width="stretch"):
                 st.session_state.resume_repo.delete_resume(resume['id'], st.session_state.user.id)
                 st.success("✅ Resume deleted!")
                 st.rerun()
@@ -768,6 +939,10 @@ def show_analytics():
         return
     
     df = pd.DataFrame(analyses)
+    if "target_role" not in df.columns:
+        df["target_role"] = "Unknown Role"
+    else:
+        df["target_role"] = df["target_role"].fillna("Unknown Role")
     df['analysis_date'] = pd.to_datetime(df['analysis_date'])
     
     col1, col2 = st.columns(2)
@@ -787,7 +962,7 @@ def show_analytics():
             font=dict(family="Inter"),
             showlegend=False
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
     with col2:
         st.markdown("** Roles Analyzed**")
@@ -802,14 +977,14 @@ def show_analytics():
             font=dict(family="Inter"),
             showlegend=True
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
     st.markdown('<div class="spacing-md"></div>', unsafe_allow_html=True)
     st.markdown("**🏆 Top Performing Analyses**")
     top_analyses = df.nlargest(5, 'match_score')[['target_role', 'match_score', 'analysis_date']]
     top_analyses['analysis_date'] = top_analyses['analysis_date'].dt.strftime('%Y-%m-%d')
     top_analyses.columns = ['Role', 'Match Score (%)', 'Date']
-    st.dataframe(top_analyses, use_container_width=True, hide_index=True)
+    st.dataframe(top_analyses, width="stretch", hide_index=True)
 
 def show_footer():
     """Show premium footer"""

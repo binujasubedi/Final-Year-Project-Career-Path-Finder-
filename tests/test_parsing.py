@@ -46,6 +46,56 @@ def test_docx_tables():
     # Check if we got any skills or content
     assert any([data.get("skills"), data.get("education"), data.get("experience")])
 
+def test_education_experience_grouping():
+    from src.parsing.enhanced_parser import parse_education_section, parse_experience_section
+
+    edu = parse_education_section("• Bachelor Of Science\n• (Stanford)")
+    assert len(edu) == 1
+    assert "Bachelor Of Science" in edu[0]
+    assert "Stanford" in edu[0]
+
+    exp = parse_experience_section(
+        "• . Two years of working experience\n"
+        "• in Data Analysis team of LIGO Scientific Collaboration [$3M Special Breakthrough Prize winner of\n"
+        "• 2016]. Over ten years of successful research experience in both theoretical and computational"
+    )
+    assert len(exp) == 1
+    assert "Two years of working experience" in exp[0]
+    assert "LIGO Scientific Collaboration" in exp[0]
+
+
+def test_bullet_only_experience_merges_into_one_item():
+    from src.parsing.enhanced_parser import parse_experience_section
+
+    exp = parse_experience_section(
+        "• ¢ Developing predictive models to improve decision\n"
+        "• making processes.\n"
+        "• ¢ Gaining hands"
+    )
+    assert len(exp) == 1
+    assert "Developing predictive models to improve decision" in exp[0]
+    assert "making processes." in exp[0]
+    assert "Gaining hands" in exp[0]
+    assert "¢" not in exp[0]
+
+
+def test_emoji_headings_and_experience_bullets():
+    from src.parsing.enhanced_parser import enhanced_extract_sections
+
+    sample = (
+        "🎓 Education:\n\n—\n\n💼 Experience:\n\n"
+        "• Decent knowledge MVC Architecture FrameWorks: Cccoa Touch\n\n"
+        "• Experience in using SOAP, REST\n\n"
+        "• based Web Services"
+    )
+    data = enhanced_extract_sections(sample)
+    assert data["education"] == []
+    assert len(data["experience"]) == 1
+    assert "Decent knowledge MVC Architecture FrameWorks" in data["experience"][0]
+    assert "Experience in using SOAP, REST" in data["experience"][0]
+    assert "based Web Services" in data["experience"][0]
+
+
 def test_error_handling():
     """Test invalid files"""
     with pytest.raises(ValueError):

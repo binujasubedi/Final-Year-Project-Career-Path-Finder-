@@ -6,12 +6,12 @@ import re
 import unicodedata
 
 try:
-    from src.parsing import parse_resume
+    from src.parsing import parse_resume_with_text
     from src.database import SkillRepository
 except ImportError:
     import sys
     sys.path.append(str(Path(__file__).parent.parent.parent))
-    from src.parsing import parse_resume
+    from src.parsing import parse_resume_with_text
     from src.database import SkillRepository
 
 # ---------- Default Skill Synonyms ----------
@@ -136,9 +136,10 @@ def parse_resume_structured(file_path: str) -> Dict[str, List[str]]:
     Parse resume file into structured fields: skills, education, experience.
     """
     try:
-        result = parse_resume(file_path)
+        parsed_resume = parse_resume_with_text(file_path)
+        result = parsed_resume.get("structured", {}) if parsed_resume else {}
         if not isinstance(result, dict):
-            return {"skills": [], "education": [], "experience": []}
+            return {"skills": [], "education": [], "experience": [], "raw_text": ""}
 
         skills = result.get("skills", [])
         if isinstance(skills, str):
@@ -147,11 +148,12 @@ def parse_resume_structured(file_path: str) -> Dict[str, List[str]]:
         return {
             "skills": skills,
             "education": result.get("education", []),
-            "experience": result.get("experience", [])
+            "experience": result.get("experience", []),
+            "raw_text": parsed_resume.get("raw_text", "") if parsed_resume else ""
         }
     except Exception as e:
         print(f"⚠️ parse_resume_structured failed: {e}")
-        return {"skills": [], "education": [], "experience": []}
+        return {"skills": [], "education": [], "experience": [], "raw_text": ""}
 
 # ---------- Skill Gap Computation ----------
 def compute_skill_gap(resume_skills: List[str], required_skills: List[str],

@@ -127,6 +127,37 @@ class AuthService:
         except:
             return None
 
+    def restore_session(self, access_token: str, refresh_token: str) -> Dict[str, Any]:
+        """
+        Restore a Supabase auth session from persisted tokens.
+        """
+        try:
+            response = self.client.auth.set_session(access_token, refresh_token)
+            user = getattr(response, "user", None)
+            session = getattr(response, "session", None)
+
+            if not user:
+                current_user = self.get_current_user()
+                user = current_user
+
+            if user:
+                return {
+                    "success": True,
+                    "user": user,
+                    "session": session,
+                    "message": "Session restored"
+                }
+
+            return {
+                "success": False,
+                "message": "No active session"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "message": _format_auth_error(e)
+            }
+
     def get_session(self) -> Optional[Any]:
         """
         Get current session
